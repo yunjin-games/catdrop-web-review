@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#fff5df"><meta name="description" content="Slide cozy houses and bring their matching cats home. A relaxing puzzle with 500 levels, eight cat breeds and playful surprises.">
+  <title>Cat Drop · A little home for every cat</title>
+  <link rel="icon" href="./assets/cats/tabby_sit.png"><link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="./src/poki.css">
+</head>
+<body>
+  <main id="app">
+    <header class="topbar"><div class="brand"><img src="./assets/cats/tabby_happy.png" alt=""><span>Cat Drop<small data-i18n="subtitle">A little home for every cat</small></span></div><div class="resources"><button id="coins" class="pill" aria-label="Coin shop"><img src="./assets/art/ic_coin.png" alt=""><span id="coin-count">0</span><b>+</b></button><button id="settings" class="round" aria-label="Settings">⚙</button></div></header>
+    <div class="layout">
+      <aside class="welcome"><span class="eyebrow">A LITTLE PUZZLE, A LOT OF PURR.</span><h1 data-i18n="welcome">Come on in,<br>little friend<span>!</span></h1><p data-i18n="welcomeText">Slide a cozy house.<br>Bring its matching cats home.</p><img class="home-scene" src="./assets/art/home_scene.webp" alt="Cats playing with boxes in a cozy room"><div class="welcome-bottom"><span data-i18n="noTimer">No time limit</span><i>✦</i><span data-i18n="relax">Take your time</span></div></aside>
+      <section class="game-card" aria-label="Cat puzzle">
+        <div class="levelbar"><div><span class="eyebrow" data-i18n="journey">A LITTLE JOURNEY HOME</span><h2><span data-i18n="level">Level</span> <span id="level-number">1</span><span id="difficulty" class="difficulty">Easy</span></h2></div><button id="pause" class="round" aria-label="Pause game">Ⅱ</button></div>
+        <div class="chest-row"><img src="./assets/art/ic_chest.png" alt="Reward chest"><div class="track"><div id="chest-fill" style="width:0"></div></div><span id="chest-count">0 / 9</span></div>
+        <div id="board-wrap"><canvas id="board" tabindex="0" aria-label="Drag a house, or select one and use arrow keys"></canvas><div id="loading" data-i18n="loading">The cats are on their way…</div></div>
+        <p id="instruction" class="instruction" aria-live="polite">Drag a house over its matching cats</p>
+        <div id="boosters" class="boosters"></div>
+        <div class="game-actions"><button id="undo" class="text-button" data-i18n="undo">↶ Undo move</button><span class="dot">·</span><button id="restart" class="text-button" data-i18n="restart">↻ Restart</button></div>
+      </section>
+      <aside class="notes"><div class="note"><span class="eyebrow">HOW TO PLAY</span><h3 data-i18n="howTitle">A cozy home<br>for every cat</h3><img src="./assets/cats/black_sit.png" alt="A black cat"><p data-i18n="howText">Match the cat on the roof.<br>Slide its house over the same cats!</p><span class="note-line"></span><p class="quiet" data-i18n="controls">Drag with mouse or touch.<br>Or select a house and use arrow keys.</p></div><button id="attendance" class="attendance"><span>☀</span><div><span data-i18n="giftTitle">Your daily little gift</span><small data-i18n="giftSub">Come say hello every day</small></div><b>→</b></button><p id="save-status" class="save-status">Your progress is saved automatically</p></aside>
+    </div>
+    <footer><span data-i18n="footer">One little cat. One happy home.</span><span>CAT DROP</span></footer>
+  </main>
+  <dialog id="dialog"><div id="dialog-body"></div></dialog><div id="toast" role="status"></div>
+  <script src="./src/bootstrap.js"></script>
+</body>
+</html>

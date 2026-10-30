@@ -1,0 +1,14 @@
+Cat Drop Web
+
+Jua Regular font
+Copyright 2018 The Jua Project Authors
+Licensed under the SIL Open Font License, version 1.1.
+Full license: assets/fonts/OFL.txt
+License source: https://github.com/google/fonts/tree/main/ofl/jua
+
+Game artwork, cat sprites, house pieces and audio were copied from the owner's
+existing Cat Drop Android project for this web adaptation. No reference-game
+APK assets or external stock media were imported by this web project.
+
+Poki SDK is loaded from the official Poki CDN in the Poki target. Its use is
+subject to Poki's developer terms and the applicable game agreement.

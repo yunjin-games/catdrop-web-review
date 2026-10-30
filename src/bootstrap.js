@@ -1,0 +1,1 @@
+(() => { import('./main.js').then(m => m.ready).catch(() => { const box = document.getElementById('loading'); box.textContent = 'Unable to start the game. Please reload and try again.'; box.style.display = 'grid'; }); })();
