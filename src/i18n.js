@@ -12,6 +12,15 @@ const ko={
   subtitle:'고양이들의 작은 집',welcome:'어서 와,<br>우리 집으로<span>!</span>',welcomeText:'집을 살짝 움직여<br>고양이 친구들을 모아 주세요.',noTimer:'시간 제한 없이',relax:'천천히, 즐겁게',journey:'작은 집으로 떠나는 여행',level:'레벨',easy:'쉬움',normal:'보통',hard:'어려움',super_hard:'매우 어려움',loading:'고양이들이 오고 있어요…',instruction:'집을 끌어서 같은 고양이를 모아 주세요',undo:'↶ 한 수 되돌리기',restart:'↻ 다시 시작',howTitle:'작은 집을<br>움직여 보세요',howText:'집에 그려진 고양이와<br>같은 친구 위로 쏙!',controls:'마우스 · 터치 드래그<br>집 선택 후 방향키도 가능해요',giftTitle:'오늘의 작은 선물',giftSub:'하루 한 번, 만나러 와요',saved:'진행 상황은 자동 저장돼요',unsaved:'저장을 사용할 수 없어요. 이번 플레이만 유지됩니다.',footer:'고양이 한 마리, 행복 한 조각.',settings:'설정',shopLabel:'코인 상점',pauseLabel:'게임 일시정지',canvasLabel:'집을 드래그하거나 선택 후 방향키로 움직이세요',booster_magnet:'고양이 밥',booster_mouse:'장난감 쥐',booster_laser:'레이저',unlockAt:'레벨 {level} 해금',seeYou:'레벨 {level}에서 만나요!',pickHome:'고양이 밥을 줄 집을 선택하세요',pickCat:'깨어 있는 고양이를 선택하세요',pickEmpty:'옮길 빈칸을 선택하세요',pickNeighbor:'바로 옆 빈칸을 선택하세요',cantFeed:'지금은 이 집을 채울 수 없어요',takeBreak:'잠깐, 쉬어 가요',noRush:'서두르지 않아도 괜찮아요.',music:'배경음악',sfx:'효과음',language:'언어',daily:'☀ 오늘의 선물',continue:'계속 플레이',back:'돌아가기',shop:'작은 도움 상점',balance:'보유 코인 {coins}',welcomeBack:'오늘도 만나서 반가워요!',dailyText:'하루 한 번, 작은 선물을 받아 가세요.<br>연속 방문 {days}일',claimed:'오늘 선물을 받았어요',claim:'오늘의 선물 받기',giftAlt:'선물 상자',loadTitle:'고양이들이 길을 잃었어요',loadText:'게임 파일을 불러오지 못했습니다.<br>연결 상태를 확인한 뒤 다시 시도해 주세요.',retry:'다시 시도',bootTitle:'게임을 불러올 수 없어요',connection:'연결 상태를 확인해 주세요.',won:'모두 집에 도착했어요!',clear:'레벨 {level} 완료 · 코인 +10',next:'다음 레벨 →',adReward:'🎬 광고 보고 코인 +90',earned:'코인 +90 받았어요',adUnavailable:'지금은 광고를 볼 수 없어요',happyAlt:'행복한 고양이',chestReward:'상자 보상: 코인 20 + 고양이 밥 1',unlockReward:'{name} 해금 · 4개 선물!',restartTitle:'다시 시작할까요?',restartText:'현재 레벨을 처음부터 시작합니다.<br>사용한 아이템은 돌려받지 않습니다.',guide_box:'상자 속에 고양이가 숨어 있어요. 집을 상자 옆으로 가져가면 열립니다.',guide_chameleon:'집이 움직일 때마다 색이 바뀌어요. 지금 보이는 색을 맞춰 주세요.',guide_arrow:'화살표 칸에는 화살표 방향으로만 들어갈 수 있어요.',guideTitle:'새로운 친구를 만났어요',gotIt:'알겠어요!'
 };
 export const messages={en,ko,ja,'zh-CN':zhCN,'zh-TW':zhTW,de};
+const firstSteps={
+  en:['First, select a house','Drag it over the outlined matching cats','Collect the number of cats shown on the house'],
+  ko:['먼저 고양이 집을 눌러 보세요','테두리로 표시된 같은 고양이 쪽으로 끌어 보세요','집에 적힌 숫자만큼 고양이를 모으면 완료!'],
+  ja:['まずはおうちを選んでみよう','枠で囲まれた同じ猫の上にドラッグしよう','おうちの数字と同じ数の猫を集めよう！'],
+  'zh-CN':['先点选一间小屋','拖到边框标出的同类猫咪上方','收集小屋上数字所示数量的猫咪！'],
+  'zh-TW':['先點選一間小屋','拖到邊框標出的同類貓咪上方','收集小屋上數字所示數量的貓咪！'],
+  de:['Wähle zuerst ein Haus aus','Ziehe es über die umrandeten passenden Katzen','Sammle so viele Katzen, wie die Zahl am Haus zeigt']
+};
+for(const [locale,[firstPick,firstDrag,firstGoal]]of Object.entries(firstSteps))Object.assign(messages[locale],{firstPick,firstDrag,firstGoal});
 export let language='en';
 export function resolveLanguage(value){const raw=String(value||'en').toLowerCase();if(raw.startsWith('zh'))return /hant|tw|hk|mo/.test(raw)?'zh-TW':'zh-CN';const base=raw.split(/[-_]/)[0];return Object.hasOwn(messages,base)?base:'en';}
 export function setLanguage(value){language=resolveLanguage(value);return language;}

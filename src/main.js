@@ -34,7 +34,11 @@ function stats(){
   $('undo').disabled=!history.length||clearing;
 }
 function instructions(){
-  $('instruction').textContent=t(mode==='magnet'?'pickHome':mode==='mouse'?(catFrom?'pickEmpty':'pickCat'):mode==='laser'?(catFrom?'pickNeighbor':'pickCat'):'instruction');
+  const home=state?.homes.find(h=>h.id===selected),row=$('instruction');
+  const key=mode==='magnet'?'pickHome':mode==='mouse'?(catFrom?'pickEmpty':'pickCat'):mode==='laser'?(catFrom?'pickNeighbor':'pickCat'):number===1?(state?.turn>0?'firstGoal':home?'firstDrag':'firstPick'):'instruction';
+  const label=document.createElement('span');label.textContent=t(key);row.replaceChildren();
+  if(home&&!mode){const cat=document.createElement('img');cat.src=`./assets/cats/${home.breed}_sit.png`;cat.alt='';row.append(cat);}
+  row.append(label);row.classList.toggle('matching',!!home&&!mode);
 }
 function modal(html,handlers={}){
   cancelDrag();platform.stop();$('dialog-body').innerHTML=html;
@@ -85,7 +89,7 @@ function apply(result){
   if(!result.ok)return false;
   state=result.state;const events=result.events;
   if(events.some(e=>e.type==='homeDone'))sound('home_done');else if(events.some(e=>e.type==='absorbed'))sound('absorb');else if(events.some(e=>e.type==='woke'))sound('wake');
-  draw();if(won(state))win();else save();stats();return true;
+  instructions();draw();if(won(state))win();else save();stats();return true;
 }
 function win(){
   if(clearing)return;clearing=true;platform.stop();sound('win');
@@ -113,8 +117,8 @@ function boosterAt(p){
 canvas.addEventListener('pointerdown',e=>{
   if(loading||clearing||dialog.open||platform.busy||pointer!==null||e.button!==0)return;
   e.preventDefault();canvas.focus({preventScroll:true});platform.start();audioUpdate();const p=position(e).map(Math.floor);
-  if(mode){boosterAt(p);return;}const h=homeAt(state,p);if(!h){selected=null;draw();return;}
-  selected=h.id;drag=new Drag(state,h.id);pointer=e.pointerId;canvas.setPointerCapture(pointer);drag.last=[e.clientX,e.clientY];drag.initial=state;drag.moved=false;sound('pick');draw();
+  if(mode){boosterAt(p);return;}const h=homeAt(state,p);if(!h){selected=null;instructions();draw();return;}
+  selected=h.id;drag=new Drag(state,h.id);pointer=e.pointerId;canvas.setPointerCapture(pointer);drag.last=[e.clientX,e.clientY];drag.initial=state;drag.moved=false;sound('pick');instructions();draw();
 });
 canvas.addEventListener('pointermove',e=>{
   if(!drag||e.pointerId!==pointer||dialog.open||clearing)return;
@@ -138,12 +142,17 @@ window.addEventListener('blur',()=>{cancelDrag();platform.stop();bgm.pause();});
 window.addEventListener('focus',audioUpdate);
 $('settings').onclick=$('pause').onclick=()=>{if(!loading&&!clearing&&!platform.busy)settings();};
 $('coins').onclick=()=>{if(!loading&&!clearing&&!platform.busy)shop();};$('attendance').onclick=()=>{if(!loading&&!clearing&&!platform.busy)attendance();};
-$('undo').onclick=()=>{if(!history.length||clearing||dialog.open)return;cancelDrag();state=history.pop();save();stats();draw();};
+$('undo').onclick=()=>{if(!history.length||clearing||dialog.open)return;cancelDrag();state=history.pop();save();stats();instructions();draw();};
 $('restart').onclick=()=>{if(loading||clearing||dialog.open||platform.busy)return;modal(`<h2>${t('restartTitle')}</h2><p>${t('restartText')}</p><button id="yes" class="primary">${t('restart')}</button><button id="back" class="close">${t('continue')}</button>`,{yes:()=>{closeModal();load(number);},back:closeModal});};
 
 function rounded(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}}
 function sprite(name,x,y,w,h=w){const img=images.get(name);if(img)ctx.drawImage(img,x,y,w,h);}
 function text(value,x,y,size,color='#66503b'){ctx.font=`${size}px Jua, sans-serif`;ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(value,x,y);}
+function matchingCell(x,y,c,dashed=false){
+  ctx.save();ctx.beginPath();ctx.roundRect(x+c*.025,y+c*.025,c*.95,c*.95,c*.14);
+  ctx.fillStyle='#fff0b8';ctx.fill();ctx.strokeStyle='#a85b12';ctx.lineWidth=Math.max(2,c*.045);
+  if(dashed)ctx.setLineDash([c*.09,c*.06]);ctx.stroke();ctx.restore();
+}
 function resize(){
   const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;const ratio=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(r.width*ratio);canvas.height=Math.round(r.height*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);
   if(state){const cell=Math.min(r.width/(state.cols+1.7),r.height/(state.rows+1.7));geometry={cell,x:(r.width-state.cols*cell)/2,y:(r.height-state.rows*cell)/2};}draw();
@@ -155,9 +164,11 @@ function draw(){
     if(!inBoard(state,[x,y]))continue;rounded(ox+x*c+1,oy+y*c+1,c-2,c-2,5,'#fffaf0','#e8dcc3');
   }
   for(const a of state.arrows)text({U:'↑',D:'↓',L:'←',R:'→'}[a.dir],ox+(a.x+.5)*c,oy+(a.y+.5)*c,c*.5,'#b7b397');
+  const matchingBreed=!mode&&state.homes.find(h=>h.id===selected)?.breed;
   for(const cat of state.cats){
     const breed=colorAt(cat,state.turn),x=ox+cat.x*c,y=oy+cat.y*c;
-    if(selected&&state.homes.find(h=>h.id===selected)?.breed===breed)rounded(x+1,y+1,c-2,c-2,7,'#e2ebc4');
+    // Keep the original cat colours intact; never expose a boxed cat's identity.
+    if(matchingBreed===breed&&!cat.box)matchingCell(x,y,c,cat.sleep);
     if(catFrom&&catFrom[0]===cat.x&&catFrom[1]===cat.y)rounded(x,y,c,c,8,'#e2edb6','#879b61');
     sprite(cat.box?'box':`${breed}_${cat.sleep?'sleep':'sit'}`,x+c*.04,y+c*.03,c*.92,c*.92);
     if(cat.sleep)text('z',x+c*.84,y+c*.18,c*.22,'#947fa3');
@@ -173,7 +184,9 @@ function draw(){
   for(const q of state.queues){if(!q.breeds.length)continue;
     const d={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]}[q.side];
     const x=ox+(q.x+.5+d[0]*.75)*c,y=oy+(q.y+.5+d[1]*.75)*c;
-    rounded(x-c*.32,y-c*.32,c*.64,c*.64,c*.15,'#fffcf2','#c6af87');sprite(`${q.breeds[0]}_sit`,x-c*.28,y-c*.28,c*.56);
+    rounded(x-c*.32,y-c*.32,c*.64,c*.64,c*.15,'#fffcf2','#c6af87');
+    if(matchingBreed===q.breeds[0])matchingCell(x-c*.32,y-c*.32,c*.64);
+    sprite(`${q.breeds[0]}_sit`,x-c*.28,y-c*.28,c*.56);
     rounded(x+c*.1,y+c*.1,c*.3,c*.3,c*.1,'#e7bd6e');text(q.breeds.length,x+c*.25,y+c*.25,c*.2,'#fff');
   }
 }

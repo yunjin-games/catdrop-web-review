@@ -39,7 +39,8 @@ export function drawHouse(ctx,images,h,geometry,{dx=0,dy=0,dragging=false,mode=n
   ctx.save();ctx.globalAlpha=(dim&&!dragging) ? .45 : 1;
   const outer=outline(h.cells,c,left,top,0),inner=outline(h.cells,c,left,top,ow);
   if(dragging){ctx.save();ctx.shadowColor='#00000065';ctx.shadowBlur=c*.2;ctx.shadowOffsetY=c*.12;ctx.fillStyle=INK;ctx.fill(outer);ctx.restore();}
-  if(lit||selected){ctx.strokeStyle=lit?'#ffffffcc':'#c1d59f';ctx.lineWidth=c*(lit?.16:.08);ctx.stroke(outer);}
+  if(selected&&!mode){ctx.strokeStyle='#fffdf3';ctx.lineWidth=c*.17;ctx.stroke(outer);ctx.strokeStyle='#bd761b';ctx.lineWidth=c*.10;ctx.stroke(outer);}
+  else if(lit){ctx.strokeStyle='#ffffffcc';ctx.lineWidth=c*.16;ctx.stroke(outer);}
   ctx.fillStyle=INK;ctx.fill(outer);
   function piece(name,x,y,w,height,color,flip=false){
     const image=tinted(images,name,color);if(!image)return;
@@ -60,7 +61,8 @@ export function drawHouse(ctx,images,h,geometry,{dx=0,dy=0,dragging=false,mode=n
     }
     if(i!==0)continue;
     const ear=images.get('house_ear');if(ear){const eh=c*.26,ew=ear.width*eh/ear.height,ey=rt-eh+c*.08;piece('house_ear',l+c*.08,ey,ew,eh,roofColors[h.breed]);piece('house_ear',r-c*.08-ew,ey,ew,eh,roofColors[h.breed],true);}
-    const radius=c*.2,cx=(l+r)/2,cy=rt+rh*.5;
+    const radius=c*(selected && !mode ? .27 : .2),cx=(l+r)/2,cy=rt+rh*.5;
+    if(selected&&!mode){ctx.beginPath();ctx.arc(cx,cy,radius+ow*1.5,0,Math.PI*2);ctx.fillStyle='#e3a12c';ctx.fill();}
     ctx.beginPath();ctx.arc(cx,cy,radius+ow*.7,0,Math.PI*2);ctx.fillStyle=INK;ctx.fill();
     ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fillStyle='#fffbf2';ctx.fill();
     const cat=images.get(`${h.breed}_sit`),size=radius*1.9;if(cat)ctx.drawImage(cat,Math.round(cx-size/2),Math.round(cy-size/2),Math.round(size),Math.round(size));
